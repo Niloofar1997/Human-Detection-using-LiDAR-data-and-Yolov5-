@@ -18,8 +18,8 @@ To begin using the YOLOv5 model for patient monitoring with LiDAR technology, pl
 
 1. Clone the Repository Start by cloning the official YOLOv5 repository from Ultralytics. Open your command line interface and enter the following command:
 
-`git clone https://github.com/ultralytics/yolov5`
+```git clone https://github.com/ultralytics/yolov5```
 
 2. Change to the Repository Directory After the cloning process is complete, navigate into the 'yolov5' directory to make sure all further commands are executed from the correct location:
 
-`cd yolov5`
+```cd yolov5```
