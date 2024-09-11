@@ -1,7 +1,8 @@
 # Human-Detection-using-LiDAR-data-and-Yolov5-
 A transfer learning approach
 
-##INTRODUCTION
+## INTRODUCTION
+
 **Project Overview:**
 This project focuses on enhancing continuous patient monitoring within healthcare systems—a crucial element for ensuring patient safety and well-being. Traditional monitoring methods, typically camera-based, require extensive oversight and can intrude on patient privacy. To address these challenges, LiDAR technology is utilized as a superior alternative, offering effective monitoring across diverse lighting conditions without compromising privacy. LiDAR technology distinguishes itself by providing high-resolution depth data that respects patient confidentiality, making it an optimal choice for environments where privacy is paramount.
 
