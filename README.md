@@ -39,7 +39,7 @@ python detect.py --class 0 --weights Yolov5s.pt --conf-thres=0.4 --source exampl
 ```
 This automatically stores the outcomes in the folder runs/detect/exp as labeled images with annotations displaying the confidence levels of the predictions.
 
-### Extra Information 
+### *Extra Information* 
 
 YOLOv5, designed for 2D images, contrasts with the 3D nature of LiDAR data. To adapt YOLOv5, 3D LiDAR data is converted to 2D by extracting the reflectivity layer, making it suitable for the model.
 YOLOv5 processes images but not PCAP files from Ouster LiDAR sensors. To use Ouster data, it must be converted into image formats, aided by the Ouster Python SDK. This SDK adjusts the `detect.py` file in the YOLOv5 repository to analyze the reflectivity layer from PCAP files, creating a customized script detailed later.
@@ -74,3 +74,12 @@ for file in image_files:
     rec = np.uint8(rec)
     cv2.imwrite(result_filename, rec)
 ```
+In the next phase, we focused on training a custom YOLOv5 model using a Python script in a GPU-enabled Google Colab environment. The script was tailored with specific commands to optimize learning:
+```bash
+!python train.py --img 640 --single-cls --batch 16 --epochs 30 --data /content/datasets/human-detection-1/data.yaml --weights yolov5s.pt
+```
+As a transfer learning approach, the **yolov5s** weight was used 
+
+## Inference with Object Detection 
+To run the  trained model on (pre-recorded) LiDAR data, run the following command:
+```bash
