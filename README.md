@@ -14,6 +14,7 @@ The primary objective of this initiative is to seamlessly integrate our LiDAR-ba
 
 ## Installation and Setup Instructions
 
+Installation of Ouster Python SDK is necessary, as we are using LiDAR data comming from Ouster's LiDAR sensor. the installation instructions can be found [here](https://static.ouster.dev/sdk-docs/).
 To begin using the YOLOv5 model with LiDAR technology, please follow these steps:
 
 1. Clone the Repository Start by cloning the official YOLOv5 repository from Ultralytics. Open your command line interface and enter the following command:
@@ -35,3 +36,8 @@ pip install -r requirements.txt
 ```bash
 python detect.py --class 0 --weights Yolov5s.pt --conf-thres=0.4 --source example_pic.jpeg --view-img
 ```
+This automatically stores the outcomes in the folder runs/detect/exp as labeled images with annotations displaying the confidence levels of the predictions.
+
+**Extra Information**
+
+YOLOv5, designed for 2D images, contrasts with the 3D nature of LiDAR data. To adapt YOLOv5, 3D LiDAR data is converted to 2D by extracting the reflectivity layer, making it suitable for the model.
