@@ -41,7 +41,6 @@ This automatically stores the outcomes in the folder runs/detect/exp as labeled 
 
 ## Inference with Object Detection 
 To run the  trained model on (pre-recorded) LiDAR data, run the following command:
-```bash
 
 ### *Extra Information* 
 
