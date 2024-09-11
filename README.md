@@ -39,6 +39,10 @@ python detect.py --class 0 --weights Yolov5s.pt --conf-thres=0.4 --source exampl
 ```
 This automatically stores the outcomes in the folder runs/detect/exp as labeled images with annotations displaying the confidence levels of the predictions.
 
+## Inference with Object Detection 
+To run the  trained model on (pre-recorded) LiDAR data, run the following command:
+```bash
+
 ### *Extra Information* 
 
 YOLOv5, designed for 2D images, contrasts with the 3D nature of LiDAR data. To adapt YOLOv5, 3D LiDAR data is converted to 2D by extracting the reflectivity layer, making it suitable for the model.
@@ -80,6 +84,48 @@ In the next phase, we focused on training a custom YOLOv5 model using a Python s
 ```
 As a transfer learning approach, the **yolov5s** weight was used 
 
-## Inference with Object Detection 
-To run the  trained model on (pre-recorded) LiDAR data, run the following command:
+Additionally, the [Roboflow](https://roboflow.com/) Python package was used to manage dataset preparation:
 ```bash
+%pip install -q roboflow
+from roboflow import Roboflow
+rf = Roboflow(api_key="API_KEY_HERE")
+project = rf.workspace("hochschule-wismar-zsiui").project("human-detection-o2d8k")
+dataset = project.version(1).download("yolov5")
+```
+**Data Reception & Image Conversion:**
+
+The pipeline begins by checking if the incoming data is in PCAP format using if `is_pcap`. After identifying the data format, it extracts sensor metadata from JSON files for processing:
+```bash
+with open(metadata_path, 'r') as f:
+    metadata = client.SensorInfo(f.read())
+```
+A video writer is then set up to save processed data as video files:
+```bash
+vid_writer = cv2.VideoWriter(save_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+```
+LiDAR data is processed to convert scans into a pseudo-RGB format for YOLOv5 compatibility:
+```bash
+for scan in scans:
+    ref_field = scan.field(client.ChanField.REFLECTIVITY)
+    ref_val = client.destagger(pcap_file.metadata, ref_field)
+    combined_img = np.dstack((ref_val, ref_val, ref_val))
+```
+The processed data is prepared for YOLOv5 model inference:
+```bash
+dataset = LoadNumpy(numpy=combined_img, path="", img_size=imgsz, stride=stride, auto=pt and not jit)
+if pt and device.type != 'cpu':
+    model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.model.parameters())))
+```
+Images are processed and predictions are refined using Non-Maximum Suppression (NMS) to ensure accuracy:
+```bash
+for path, im, im0s, vid_cap, s in dataset:
+    pred = model(im, augment=augment, visualize=visualize)
+    pred = non_max_suppression(pred, conf_thres, iou_thres, classes, agnostic_nms, max_det=max_det)
+```
+Detected objects are annotated and the results are displayed:
+```bash
+for i, det in enumerate(pred):
+    det[:, :4] = scale_coords(im.shape[2:], det[:, :4], im0.shape).round()
+    annotator.box_label(xyxy, label, color=colors(c, True))
+    im0 = annotator.result()
+```
