@@ -39,7 +39,7 @@ python detect.py --class 0 --weights Yolov5s.pt --conf-thres=0.4 --source exampl
 ```
 This automatically stores the outcomes in the folder runs/detect/exp as labeled images with annotations displaying the confidence levels of the predictions.
 
-### Extra Information
+### Extra Information 
 
 YOLOv5, designed for 2D images, contrasts with the 3D nature of LiDAR data. To adapt YOLOv5, 3D LiDAR data is converted to 2D by extracting the reflectivity layer, making it suitable for the model.
 YOLOv5 processes images but not PCAP files from Ouster LiDAR sensors. To use Ouster data, it must be converted into image formats, aided by the Ouster Python SDK. This SDK adjusts the `detect.py` file in the YOLOv5 repository to analyze the reflectivity layer from PCAP files, creating a customized script detailed later.
@@ -48,3 +48,29 @@ The Ouster sensor produces PCAP files, containing raw UDP packets, and JSON file
 Dataset preparation involved recordings with the OSDome sensor in various positions and times to capture different spatial perspectives and lighting conditions, enhancing dataset diversity and robustness. Additional data from an OS0 sensor on Ouster’s website further diversified the dataset.
 
 The collection resulted in PCAP and JSON file pairs, moving the project to the image extraction stage.
+**Image Extraction:** Using the Ouster client and pcap modules, we read metadata from JSON files and point cloud data from PCAP files. The script iterates through scans from the PCAP, extracts the reflectivity data, and applies the client's destagger function to correct pixel staggering in raw LiDAR data, improving visual clarity. Each corrected scan is then converted to an 8-bit JPEG image, forming a sequential dataset.
+```bash
+with open(metadata_path, 'r') as f:
+    metadata = client.SensorInfo(f.read())
+source = pcap.Pcap(pcap_path, metadata)
+with closing(client.Scans(source)) as scans:
+    for scan in scans:
+        ref_field = scan.field(client.ChanField.REFLECTIVITY)
+        ref_val = client.destagger(source.metadata, ref_field)
+        ref_img = ref_val.astype(np.uint8)
+        filename = 'extract'+str(counter)+'.jpg'
+        cv2.imwrite(img_path+filename, ref_img)
+```
+**Preprocessing Phase:** Images are loaded in grayscale and prepared through standardization and noise reduction. Each image is resized to uniform dimensions, histogram equalization is applied to enhance feature visibility, and wavelet denoising is used to reduce noise while preserving details, readying the dataset for labeling.
+```bash
+for file in image_files:
+    img = cv2.imread(file, cv2.IMREAD_GRAYSCALE)
+    canvas = np.zeros((max_dim, max_dim), dtype=np.uint8)
+    canvas[y_off:y_off+height, x_off:x_off+width] = img
+    img_resize = cv2.resize(canvas, (640, 640))
+    img_eq = cv2.equalizeHist(img_resize)
+    coeffs = pywt.dwt2(img_eq, 'haar')
+    rec = pywt.idwt2(coeffs, 'haar')
+    rec = np.uint8(rec)
+    cv2.imwrite(result_filename, rec)
+```
