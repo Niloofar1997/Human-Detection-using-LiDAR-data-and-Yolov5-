@@ -14,15 +14,24 @@ The primary objective of this initiative is to seamlessly integrate our LiDAR-ba
 
 ## Installation and Setup Instructions
 
-To begin using the YOLOv5 model for patient monitoring with LiDAR technology, please follow these straightforward steps:
+To begin using the YOLOv5 model with LiDAR technology, please follow these steps:
 
-### 1. Clone the Repository Start by cloning the official YOLOv5 repository from Ultralytics. Open your command line interface and enter the following command:
+1. Clone the Repository Start by cloning the official YOLOv5 repository from Ultralytics. Open your command line interface and enter the following command:
 ```bash
 git clone https://github.com/ultralytics/yolov5
 ```
 
-### 2. Change to the Repository Directory After the cloning process is complete, navigate into the 'yolov5' directory to make sure all further commands are executed from the correct location:
+2. Change to the Repository Directory After the cloning process is complete, navigate into the 'yolov5' directory to make sure all further commands are executed from the correct location:
 
 ```bash
 cd yolov5
+```
+
+3.  Install the requirements
+```bash
+pip install -r requirements.txt
+```
+4. The `detect.py` script, located in the source folder of the YOLOv5 repository, is capable of performing inference on diverse input types such as images, videos, live video feeds, and webcams. For instance, if we aim to identify individuals in an image using the pre-trained YOLOv5s model with a confidence threshold set at 40%, the required command for execution in a terminal within the source directory is as follows:
+```bash
+python detect.py --class 0 --weights Yolov5s.pt --conf-thres=0.4 --source example_pic.jpeg --view-img
 ```
