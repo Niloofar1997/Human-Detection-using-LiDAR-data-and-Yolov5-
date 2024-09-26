@@ -1,5 +1,5 @@
-# Human-Detection-using-LiDAR-data-and-Yolov5-
-A transfer learning approach
+# Human-Detection-using-LiDAR-data-and-Yolov5- (A Transfer Learning Approach)
+In Progress: This project is currently under active development and nearing completion. The remaining tasks will be finalized shortly. 
 
 ## Introduction
 
